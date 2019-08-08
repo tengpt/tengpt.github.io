@@ -7,18 +7,18 @@
   
   <title>Oh My God！e.printStackTrace() 导致系统卡崩 | 滕培涛</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Quick Starte.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？！先别惊呼不可能，且听我细细道来。先看截图1： 注意右下角区域，红框部分。这块内存是什么呢？ 非堆！那么，左边是代码缓存区内存，右边红框就是字符串池，常量，基本类型数据的内存区。 然后呢？已经满了。什么原因呢？e.printStackTrace()！ 满了的后果呢？整个web服务，访问之后，没响应了">
+  <meta name="description" content="e.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？e.printStackTrace()会导致字符串池（常量、基本类型数据的内存区）空间不足。 满了的后果呢？整个web服务，访问之后，没响应了，就当是卡死掉了。 因为 e.printStackTrace()语句要产生的字符串记录的是堆栈信息，太长太多，内存被填满了！ 当然被 try 住的代码本身就有问题，导致很多调用都会">
 <meta name="keywords" content="tengpt">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Oh My God！e.printStackTrace() 导致系统卡崩">
 <meta property="og:url" content="http://yoursite.com/2019/08/08/Java异常抛出/index.html">
 <meta property="og:site_name" content="滕培涛">
-<meta property="og:description" content="Quick Starte.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？！先别惊呼不可能，且听我细细道来。先看截图1： 注意右下角区域，红框部分。这块内存是什么呢？ 非堆！那么，左边是代码缓存区内存，右边红框就是字符串池，常量，基本类型数据的内存区。 然后呢？已经满了。什么原因呢？e.printStackTrace()！ 满了的后果呢？整个web服务，访问之后，没响应了">
+<meta property="og:description" content="e.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？e.printStackTrace()会导致字符串池（常量、基本类型数据的内存区）空间不足。 满了的后果呢？整个web服务，访问之后，没响应了，就当是卡死掉了。 因为 e.printStackTrace()语句要产生的字符串记录的是堆栈信息，太长太多，内存被填满了！ 当然被 try 住的代码本身就有问题，导致很多调用都会">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-08T07:43:54.810Z">
+<meta property="og:updated_time" content="2019-08-08T07:51:00.362Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Oh My God！e.printStackTrace() 导致系统卡崩">
-<meta name="twitter:description" content="Quick Starte.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？！先别惊呼不可能，且听我细细道来。先看截图1： 注意右下角区域，红框部分。这块内存是什么呢？ 非堆！那么，左边是代码缓存区内存，右边红框就是字符串池，常量，基本类型数据的内存区。 然后呢？已经满了。什么原因呢？e.printStackTrace()！ 满了的后果呢？整个web服务，访问之后，没响应了">
+<meta name="twitter:description" content="e.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？e.printStackTrace()会导致字符串池（常量、基本类型数据的内存区）空间不足。 满了的后果呢？整个web服务，访问之后，没响应了，就当是卡死掉了。 因为 e.printStackTrace()语句要产生的字符串记录的是堆栈信息，太长太多，内存被填满了！ 当然被 try 住的代码本身就有问题，导致很多调用都会">
   
     <link rel="alternate" href="/atom.xml" title="滕培涛" type="application/atom+xml">
   
@@ -91,27 +91,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="e-printStackTrace-会导致锁死？这仅仅是打印啊，怎么可能？！先别惊呼不可能，且听我细细道来。"><a href="#e-printStackTrace-会导致锁死？这仅仅是打印啊，怎么可能？！先别惊呼不可能，且听我细细道来。" class="headerlink" title="e.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？！先别惊呼不可能，且听我细细道来。"></a>e.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？！先别惊呼不可能，且听我细细道来。</h3><p>先看截图1：</p>
-<p>注意右下角区域，红框部分。这块内存是什么呢？</p>
-<p>非堆！那么，左边是代码缓存区内存，右边红框就是字符串池，常量，基本类型数据的内存区。</p>
-<p>然后呢？已经满了。什么原因呢？e.printStackTrace()！</p>
+        <h3 id="e-printStackTrace-会导致锁死？这仅仅是打印啊，怎么可能？"><a href="#e-printStackTrace-会导致锁死？这仅仅是打印啊，怎么可能？" class="headerlink" title="e.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？"></a>e.printStackTrace() 会导致锁死？这仅仅是打印啊，怎么可能？</h3><p>e.printStackTrace()会导致字符串池（常量、基本类型数据的内存区）空间不足。</p>
 <p>满了的后果呢？整个web服务，访问之后，没响应了，就当是卡死掉了。</p>
-<p>再来看截图2：</p>
-<p>看看有多少web的请求线程，被卡住在打印这一步！</p>
-<p>原因呢？</p>
-<p>要打印字符串输出到控制台上，那你字符串常量池所在的内存块要有空间啊。</p>
-<p>然而，因为 e.printStackTrace()语句要产生的字符串记录的是堆栈信息，太长太多，内存被填满了！注意 上面代码语句：4208行！</p>
-<p>来看图3：</p>
-<p>没毛病，没没事儿找事儿冤枉谁。就是这句代码惹的祸！当然，我承认，被 try 住的代码本身就有问题，导致很多调用都会抛异常。</p>
+<p>因为 e.printStackTrace()语句要产生的字符串记录的是堆栈信息，太长太多，内存被填满了！</p>
+<p>当然被 try 住的代码本身就有问题，导致很多调用都会抛异常。</p>
 <p>那么，让我们再来理理整个事件产生的经过：</p>
 <p>短时间内大量请求访问此接口<br>-&gt; 代码本身有问题，很多情况下抛异常<br>-&gt; e.printStackTrace() 来打印异常到控制台<br>-&gt; 产生错误堆栈字符串到字符串池内存空间<br>-&gt; 此内存空间一下子被占满了<br>-&gt; 开始在此内存空间产出字符串的线程还没完全生产完整，就没空间了<br>-&gt; 大量线程产出字符串产出到一半，等在这儿（等有内存了继续搞啊）<br>-&gt; 相互等待，等内存，锁死了，整个应用挂掉了。</p>
 <p>综上，这就是 e.printStackTrace() 引发的血案。</p>
-<p>总结当然重要，有3点：<br>1，代码质量啊亲，代码不抛异常咱不就能愉快的继续浪么？<br>2，不要使用 e.printStackTrace() 啊，这玩意儿，在项目发布后，除过不断的刷控制台，并没用什么卵用啊，您到是用 log 对象输出到日志文件里面啊。<br>3，推及开来，在java中，会产生大量字符串的方法，使用时，一定得悠着点，别一不小心撑到肚子（字符串池所属的那么点非堆内存空间），撑到肚子了，会死的啊 。<br>-END-</p>
+<p>总结当然重要，有3点：<br>1，代码质量啊亲，代码不抛异常咱不就能愉快的继续浪么？<br>2，不要使用 e.printStackTrace() 啊，这玩意儿，在项目发布后，除过不断的刷控制台，并没用什么卵用啊，您到是用 log 对象输出到日志文件里面啊，e.getMessage()。<br>3，推及开来，在java中，会产生大量字符串的方法，使用时，一定得悠着点，别一不小心撑到肚子（字符串池所属的那么点非堆内存空间），撑到肚子了，会死的啊 。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/08/Java异常抛出/" data-id="cjz2dl0vb0000c0vacrlkaohl" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/08/08/Java异常抛出/" data-id="cjz2dtzki000130vaux7sir8t" class="article-share-link">Share</a>
       
       
     </footer>
